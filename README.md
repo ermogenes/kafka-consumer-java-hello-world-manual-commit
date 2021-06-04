@@ -1,5 +1,5 @@
-# kafka-consumer-java-hello-world
-A simple Java Kafka consumer.
+# kafka-consumer-java-hello-world-manual-commit
+A simple Java Kafka consumer with manual commit.
 
 ## Dependencies (`pom.xml`)
 
@@ -39,6 +39,9 @@ properties.setProperty(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDes
 properties.setProperty(ConsumerConfig.GROUP_ID_CONFIG, groupId);
 properties.setProperty(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
 
+properties.setProperty(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, "false");
+properties.setProperty(ConsumerConfig.MAX_POLL_RECORDS_CONFIG, "5");
+
 KafkaConsumer<String, String> consumer = new KafkaConsumer<String, String>(properties);
 consumer.subscribe(Arrays.asList(topic));
 
@@ -52,5 +55,8 @@ while (true) {
             "\nOffset: " + record.offset()
         );
     }
+    logger.info("committing offset...");
+    consumer.commitSync();
+    logger.info("done.");
 }
 ```

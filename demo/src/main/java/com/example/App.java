@@ -28,7 +28,7 @@ public final class App {
 
         Logger logger = LoggerFactory.getLogger(App.class.getName());
 
-        String server = "172.25.145.150:9092";
+        String server = "172.20.229.109:9092";
         String topic = "first_topic";
         String groupId = "com.example.App";
 
@@ -41,6 +41,10 @@ public final class App {
         properties.setProperty(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
         properties.setProperty(ConsumerConfig.GROUP_ID_CONFIG, groupId);
         properties.setProperty(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
+
+        // disable auto commit
+        properties.setProperty(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, "false");
+        properties.setProperty(ConsumerConfig.MAX_POLL_RECORDS_CONFIG, "5");
 
         // create consumer
         KafkaConsumer<String, String> consumer = new KafkaConsumer<String, String>(properties);
@@ -62,6 +66,13 @@ public final class App {
                     "\nOffset: " + record.offset()
                 );
             }
+
+            System.console().readLine();
+
+            // manually commit the offsets
+            logger.info("committing offset...");
+            consumer.commitSync();
+            logger.info("done.");
         }
     }
 }
